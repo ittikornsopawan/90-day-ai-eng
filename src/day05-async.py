@@ -39,10 +39,6 @@ async def call_api_async(
 
         return response.json()
 
-
-
-
-
 async def main():
 
     print("Calling Ollama...")
@@ -115,7 +111,7 @@ async def call_multiple_prompts(
         for prompt in prompts
     ]
 
-    results = await asyncio.gather(*tasks)
+    results = await asyncio.gather(*tasks, return_exceptions=True)
 
     elapsed = time.perf_counter() - start
 
@@ -131,13 +127,13 @@ async def main2():
         "1+1 เท่ากับเท่าไหร่"
     ]
 
-    ollama_results = await call_multiple_prompts(
-        api_llm_url,
-        prompts,
-        headers
-    )
+    ollama_results = await call_multiple_prompts(api_llm_url, prompts, headers)
 
-    for ollama_result in ollama_results:
+    for prompt, ollama_result in zip(prompts, ollama_results):
+        if isinstance(ollama_result, Exception):
+            print(f"'{prompt}' ล้มเหลว: {ollama_result!r}")
+            continue
+
         result = {
             "answer": ollama_result["response"],
             "model": ollama_result["model"],
