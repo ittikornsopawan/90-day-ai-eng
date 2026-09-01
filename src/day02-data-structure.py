@@ -34,7 +34,18 @@ data2 = {
     ]
 }
 
-print(data2["persons"][1]["name"])
+# Scenario from API - Accessing nested data
+json_string2 = json.dumps(data2)
+
+## Accessing nested data - Risky way
+# print(data2["persons"][1]["name"])
+
+# Accessing nested data - Safe way
+persons = json.loads(json_string2).get("persons", [])
+
+for person in persons:
+    print(person.get("name", "Unknown"))
+
 
 ## Class to represent a person
 @dataclass
